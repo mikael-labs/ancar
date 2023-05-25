@@ -33,8 +33,8 @@ import { PaginatedApiResponse } from '../shared/utils';
 import { RegisterUserRequest, UpdateUserRequest } from './requests';
 import { UserResponse } from './responses';
 
-@ApiTags('users')
-@Controller('/users')
+@ApiTags('usuarios')
+@Controller('/usuarios')
 export class UsersController {
   constructor(
     private readonly listUsers: ListUsersUseCase,

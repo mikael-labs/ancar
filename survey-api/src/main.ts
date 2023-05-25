@@ -12,7 +12,7 @@ async function bootstrap() {
 
   const config = new DocumentBuilder()
     .setTitle('Quiz API')
-    .setDescription('API that provides Quizzes operatiosn')
+    .setDescription('API that provides Quizzes operations')
     .setVersion('1.0')
     .addTag('quizzes')
     .build();

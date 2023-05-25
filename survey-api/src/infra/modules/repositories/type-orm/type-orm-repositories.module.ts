@@ -3,7 +3,7 @@ import { TypeOrmModule, TypeOrmModuleOptions } from '@nestjs/typeorm';
 import { DataSource } from 'typeorm';
 
 import {
-  UserQuizRepository,
+  QuizAnswerRepository,
   UserRepository,
   QuizRepository,
 } from 'src/core/data';
@@ -60,8 +60,8 @@ const getTypeORMConfig = (
   providers: [
     { provide: UserRepository, useClass: TypeORMUserRepository },
     { provide: QuizRepository, useClass: TypeORMQuizRepository },
-    { provide: UserQuizRepository, useClass: TypeORMUserQuizRepository },
+    { provide: QuizAnswerRepository, useClass: TypeORMUserQuizRepository },
   ],
-  exports: [UserRepository, QuizRepository, UserQuizRepository],
+  exports: [UserRepository, QuizRepository, QuizAnswerRepository],
 })
 export class TypeORMRepositoriesModule {}

@@ -1,29 +1,90 @@
 import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+import { InjectRepository } from '@nestjs/typeorm';
 
-import { UserQuizRepository } from 'src/core/data';
-import { QuizId, UserId, UserQuizAnswer } from 'src/core/entities';
+import { QuizAnswerRepository } from 'src/core/data';
+import {
+  QuizId,
+  UserId,
+  UserQuizAnswer,
+  UserQuizAnswerId,
+} from 'src/core/entities';
 
-import { QuizEntity } from './entities/quiz';
-import { UserEntity } from './entities/user';
 import { UserQuizAnswerEntity } from './entities/user-quiz-answer';
+import { Page } from 'src/core/interfaces/page';
 
 @Injectable()
-export class TypeORMUserQuizRepository implements UserQuizRepository {
+export class TypeORMUserQuizRepository implements QuizAnswerRepository {
   constructor(
     @InjectRepository(UserQuizAnswerEntity)
     private _userQuizRepository: Repository<UserQuizAnswerEntity>,
-    @InjectRepository(QuizEntity)
-    private _quizRepository: Repository<QuizEntity>,
-    @InjectRepository(UserEntity)
-    private _userRepository: Repository<UserEntity>,
   ) {}
+
+  async listByQuiz({
+    page,
+    pageSize,
+    quizId,
+  }: {
+    quizId: number;
+    page: number;
+    pageSize: number;
+  }): Promise<Page<UserQuizAnswer>> {
+    const skip = (page - 1) * pageSize;
+
+    const [quizAnswers, total] = await this._userQuizRepository.findAndCount({
+      where: {
+        quiz: {
+          id: quizId,
+        },
+      },
+      relations: {
+        quiz: true,
+        answer: true,
+        question: true,
+      },
+      skip,
+      take: pageSize,
+    });
+
+    const totalPages = Math.ceil(total / pageSize);
+    const nextPage = page >= totalPages ? null : page + 1;
+
+    return {
+      items: quizAnswers.map((quizAnswer) => quizAnswer.toDomain()),
+      nextPage,
+      totalPages,
+      total,
+      page,
+    };
+  }
+
+  async update(quizAnswer: UserQuizAnswer): Promise<UserQuizAnswer> {
+    await this._userQuizRepository.update(
+      quizAnswer.id,
+      UserQuizAnswerEntity.fromDomain(quizAnswer),
+    );
+
+    return quizAnswer;
+  }
+
+  getById(quizAnwerId: number): Promise<UserQuizAnswer | null> {
+    return this._userQuizRepository
+      .findOne({ where: { id: quizAnwerId } })
+      .then((quizAnswer) => quizAnswer?.toDomain() ?? null);
+  }
+
+  async delete(
+    quizAnswerId: UserQuizAnswerId | UserQuizAnswerId[],
+  ): Promise<void> {
+    if (!Array.isArray(quizAnswerId)) quizAnswerId = [quizAnswerId];
+
+    await this._userQuizRepository.delete(quizAnswerId);
+  }
 
   async getByQuizAndUser(
     quizId: QuizId,
     userId: UserId,
-  ): Promise<UserQuizAnswer | null> {
+  ): Promise<UserQuizAnswer[]> {
     const answers = await this._userQuizRepository.find({
       where: {
         quiz: {
@@ -35,31 +96,16 @@ export class TypeORMUserQuizRepository implements UserQuizRepository {
       },
     });
 
-    const quiz = await this._quizRepository.findOne({ where: { id: quizId } });
-    const user = await this._userRepository.findOne({ where: { id: quizId } });
-
-    if (!quiz || !user) return null;
-
-    const userQuiz = new UserQuizAnswer({
-      quiz: quiz.toDomain(),
-      user: user,
-      answers: answers.map((answer) => answer.toDomain()),
-    });
-
-    return userQuiz;
+    return answers.map((answer) => answer.toDomain());
   }
 
-  saveQuiz(quiz: UserQuizAnswer): Promise<UserQuizAnswer> {
-    const answers = UserQuizAnswerEntity.fromUserQuiz(quiz);
+  saveUserQuizAnswers(answers: UserQuizAnswer[]): Promise<UserQuizAnswer[]> {
+    const answersDB = answers.map((answer) =>
+      UserQuizAnswerEntity.fromDomain(answer),
+    );
 
-    return this._userQuizRepository.save(answers).then((answers) => {
-      const userQuiz = new UserQuizAnswer({
-        quiz: quiz.quiz,
-        user: quiz.user,
-        answers: answers.map((answer) => answer.toDomain()),
-      });
-
-      return userQuiz;
-    });
+    return this._userQuizRepository
+      .save(answersDB)
+      .then((answersDB) => answersDB.map((answerDB) => answerDB.toDomain()));
   }
 }

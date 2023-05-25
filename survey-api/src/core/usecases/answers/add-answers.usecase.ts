@@ -1,21 +1,20 @@
 import { Injectable } from '@nestjs/common';
-
-import { BadRequestError, NotFoundError } from 'src/core/errors';
-
-import { QuizRepository, UserRepository } from '../../data';
-
-import { QuizAnswerRepository } from '../../data/user-quiz.repository';
-
+import {
+  QuizRepository,
+  QuizAnswerRepository,
+  UserRepository,
+} from 'src/core/data';
 import {
   AnswerId,
   QuestionId,
+  QuizAnswer,
   QuizId,
   UserId,
   UserQuizAnswer,
-  QuizAnswer,
-} from '../../entities';
+} from 'src/core/entities';
+import { BadRequestError, NotFoundError } from 'src/core/errors';
 
-export interface AnswerQuizUseCaseRequest {
+export interface AddAnswersUseCaseRequest {
   userId: UserId;
   quizId: QuizId;
   answers: {
@@ -24,16 +23,16 @@ export interface AnswerQuizUseCaseRequest {
   }[];
 }
 
-export type AnswerQuizUseCaseResponse = any;
+export type AddAnswersUseCaseResponse = any;
 
-export abstract class AnswerQuizUseCase {
+export abstract class AddAnswersUseCase {
   abstract execute(
-    request: AnswerQuizUseCaseRequest,
-  ): Promise<AnswerQuizUseCaseResponse>;
+    request: AddAnswersUseCaseRequest,
+  ): Promise<AddAnswersUseCaseResponse>;
 }
 
 @Injectable()
-export class AnswerQuizUseCaseImpl implements AnswerQuizUseCase {
+export class AddAnswersUseCaseImpl implements AddAnswersUseCase {
   constructor(
     private _userRepository: UserRepository,
     private _quizRepository: QuizRepository,
@@ -41,10 +40,10 @@ export class AnswerQuizUseCaseImpl implements AnswerQuizUseCase {
   ) {}
 
   async execute({
-    userId,
     quizId,
+    userId,
     answers: answersRequest,
-  }: AnswerQuizUseCaseRequest): Promise<AnswerQuizUseCaseResponse> {
+  }: AddAnswersUseCaseRequest): Promise<AddAnswersUseCaseResponse> {
     const user = await this._userRepository.getById(userId);
 
     if (!user) throw new NotFoundError('Usuário não encontrado.');
@@ -59,7 +58,7 @@ export class AnswerQuizUseCaseImpl implements AnswerQuizUseCase {
     );
 
     if (userQuizAnswers.length > 0)
-      throw new BadRequestError('Você já respondeu esse questionário');
+      throw new BadRequestError('Usuário já respondeu esse questionário');
 
     const quizAnswers = answersRequest.map((answerRequest) => {
       const question = quiz.questions.find(

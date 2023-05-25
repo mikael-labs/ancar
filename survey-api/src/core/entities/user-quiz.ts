@@ -1,26 +1,30 @@
 import { Quiz } from './quiz';
 import { User } from './user';
-import { QuizAnswer } from './quiz-answer';
+import { Question } from './question';
+import { Answer } from './answer';
 
-export type UserQuizId = number;
+export type UserQuizAnswerId = number;
 
 export type UserQuizProps = {
-  id?: UserQuizId;
+  id?: UserQuizAnswerId;
   user: User;
   quiz: Quiz;
-  answers: QuizAnswer[];
+  question: Question;
+  answer: Answer;
 };
 
 export class UserQuizAnswer {
-  id?: UserQuizId;
+  id: UserQuizAnswerId;
   user: User;
   quiz: Quiz;
-  answers: QuizAnswer[];
+  question: Question;
+  answer: Answer;
 
-  constructor({ id, user, quiz, answers }: UserQuizProps) {
-    this.id = id;
+  constructor({ id, user, quiz, question, answer }: UserQuizProps) {
+    if (id) this.id = id;
     this.user = user;
     this.quiz = quiz;
-    this.answers = answers;
+    this.question = question;
+    this.answer = answer;
   }
 }

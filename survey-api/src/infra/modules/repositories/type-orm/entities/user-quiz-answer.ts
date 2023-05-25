@@ -1,4 +1,3 @@
-import { QuizAnswer } from 'src/core/entities/quiz-answer';
 import { UserQuizAnswer } from 'src/core/entities/user-quiz';
 import { Entity, ManyToOne, PrimaryGeneratedColumn, Unique } from 'typeorm';
 import { AnswerEntity } from './answer';
@@ -26,26 +25,25 @@ export class UserQuizAnswerEntity {
   @ManyToOne(() => QuestionEntity)
   question: QuestionEntity;
 
-  static fromUserQuiz(userQuiz: UserQuizAnswer): UserQuizAnswerEntity[] {
-    const userQuizAnswers = userQuiz.answers.map((answer) => {
-      const userQuizAnswer = new UserQuizAnswerEntity();
-      userQuizAnswer.id = answer.id;
-      userQuizAnswer.answer = AnswerEntity.fromDomain(answer.answer);
-      userQuizAnswer.question = QuestionEntity.fromDomain(answer.question);
-      userQuizAnswer.quiz = QuizEntity.fromDomain(userQuiz.quiz);
-      userQuizAnswer.user = UserEntity.fromDomain(userQuiz.user);
+  static fromDomain(userQuiz: UserQuizAnswer): UserQuizAnswerEntity {
+    const userQuizAnswer = new UserQuizAnswerEntity();
 
-      return userQuizAnswer;
-    });
+    userQuizAnswer.id = userQuiz.id;
+    userQuizAnswer.answer = AnswerEntity.fromDomain(userQuiz.answer);
+    userQuizAnswer.question = QuestionEntity.fromDomain(userQuiz.question);
+    userQuizAnswer.quiz = QuizEntity.fromDomain(userQuiz.quiz);
+    userQuizAnswer.user = UserEntity.fromDomain(userQuiz.user);
 
-    return userQuizAnswers;
+    return userQuizAnswer;
   }
 
-  toDomain(): QuizAnswer {
-    return new QuizAnswer({
+  toDomain(): UserQuizAnswer {
+    return new UserQuizAnswer({
       id: this.id,
       answer: this.answer,
       question: this.question,
+      quiz: this.quiz.toDomain(),
+      user: this.user,
     });
   }
 }

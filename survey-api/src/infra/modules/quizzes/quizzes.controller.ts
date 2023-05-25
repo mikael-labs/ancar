@@ -19,10 +19,13 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 
-import { QuizId } from 'src/core/entities';
+import { QuizId, UserQuizAnswerId } from 'src/core/entities';
+import { AddAnswersUseCase } from 'src/core/usecases/answers/add-answers.usecase';
+import { DeleteAnswerUseCase } from 'src/core/usecases/answers/delete-answer.usecase';
+import { ListAnswersUseCase } from 'src/core/usecases/answers/list-answers.usecase';
+import { UpdateAnswerUseCase } from 'src/core/usecases/answers/update-answers.usecase';
 
 import {
-  AnswerQuizUseCase,
   CreateQuizUseCase,
   DeleteQuizUseCase,
   GetQuizByIdUseCase,
@@ -37,41 +40,45 @@ import { User } from '../auth/jwt/decorators';
 import { JwtAuthGuard } from '../auth/jwt/jwt.guard';
 import { AuthenticatedUser } from '../auth/types';
 
-import {
-  ListPaginatedRequest,
-  PageResponse,
-  PaginatedApiResponse,
-} from '../shared';
+import { PageResponse, PaginatedApiResponse } from '../shared';
 
-import { AnswerQuizRequest, CreateQuizRequest } from './requests';
+import {
+  AnswerQuizRequest,
+  CreateQuizRequest,
+  UpdateAnswerRequest,
+} from './requests';
 import {
   MyQuizListResponse,
   QuizListResponse,
   QuizResponse,
 } from './responses';
 
-@ApiTags('quizzes')
+@ApiTags('questionarios')
 @ApiExtraModels(PageResponse, QuizListResponse, MyQuizListResponse)
-@Controller('quizzes')
+@Controller('questionarios')
 export class QuizzesController {
   constructor(
-    private readonly createQuiz: CreateQuizUseCase,
-    private readonly listQuizzes: ListQuizzesUseCase,
-    private readonly deleteQuiz: DeleteQuizUseCase,
-    private readonly getQuizById: GetQuizByIdUseCase,
-    private readonly updateQuiz: UpdateQuizUseCase,
-    private readonly answerQuiz: AnswerQuizUseCase,
-    private readonly listQuizzesToAnswer: ListQuizzesToAnswerUseCase,
-    private readonly listAnsweredQuizzes: ListAnsweredQuizzesUseCase,
-    private readonly listMyQuizzes: ListMyQuizzesUseCase,
+    private readonly _createQuiz: CreateQuizUseCase,
+    private readonly _listQuizzes: ListQuizzesUseCase,
+    private readonly _deleteQuiz: DeleteQuizUseCase,
+    private readonly _getQuizById: GetQuizByIdUseCase,
+    private readonly _updateQuiz: UpdateQuizUseCase,
+    private readonly _listQuizzesToAnswer: ListQuizzesToAnswerUseCase,
+    private readonly _listAnsweredQuizzes: ListAnsweredQuizzesUseCase,
+    private readonly _listMyQuizzes: ListMyQuizzesUseCase,
+    private readonly _answerQuiz: AddAnswersUseCase,
+    private readonly _deleteAnswer: DeleteAnswerUseCase,
+    private readonly _updateAnswers: UpdateAnswerUseCase,
+    private readonly _listAnswers: ListAnswersUseCase,
   ) {}
 
   @PaginatedApiResponse(QuizListResponse)
   @Get('/')
   list(
-    @Query() { page = 1, pageSize = 10 }: ListPaginatedRequest,
+    @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number,
+    @Query('pageSize', new DefaultValuePipe(10), ParseIntPipe) pageSize: number,
   ): Promise<PageResponse<QuizListResponse>> {
-    return this.listQuizzes.execute({ page, pageSize });
+    return this._listQuizzes.execute({ page, pageSize });
   }
 
   @UseGuards(JwtAuthGuard)
@@ -82,7 +89,7 @@ export class QuizzesController {
     @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number,
     @Query('pageSize', new DefaultValuePipe(10), ParseIntPipe) pageSize: number,
   ): Promise<PageResponse<QuizListResponse>> {
-    return this.listQuizzesToAnswer.execute({ userId: id, page, pageSize });
+    return this._listQuizzesToAnswer.execute({ userId: id, page, pageSize });
   }
 
   @UseGuards(JwtAuthGuard)
@@ -93,7 +100,7 @@ export class QuizzesController {
     @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number,
     @Query('pageSize', new DefaultValuePipe(10), ParseIntPipe) pageSize: number,
   ): Promise<PageResponse<QuizListResponse>> {
-    return this.listAnsweredQuizzes.execute({ userId: id, page, pageSize });
+    return this._listAnsweredQuizzes.execute({ userId: id, page, pageSize });
   }
 
   @UseGuards(JwtAuthGuard)
@@ -104,13 +111,13 @@ export class QuizzesController {
     @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number,
     @Query('pageSize', new DefaultValuePipe(10), ParseIntPipe) pageSize: number,
   ) {
-    return this.listMyQuizzes.execute({ userId: id, page, pageSize });
+    return this._listMyQuizzes.execute({ userId: id, page, pageSize });
   }
 
   @ApiOkResponse({ type: QuizResponse })
   @Get('/:id')
   getById(@Param('id', ParseIntPipe) id: QuizId) {
-    return this.getQuizById.execute({ id });
+    return this._getQuizById.execute({ id });
   }
 
   @ApiOkResponse({ type: QuizResponse })
@@ -119,13 +126,13 @@ export class QuizzesController {
     @Param('id', ParseIntPipe) id: QuizId,
     @Body() request: CreateQuizRequest,
   ) {
-    return this.updateQuiz.execute({ ...request, id });
+    return this._updateQuiz.execute({ ...request, id });
   }
 
   @ApiNoContentResponse()
   @Delete('/:id')
   delete(@Param('id', ParseIntPipe) id: QuizId) {
-    return this.deleteQuiz.execute({ id });
+    return this._deleteQuiz.execute({ id });
   }
 
   @UseGuards(JwtAuthGuard)
@@ -135,17 +142,47 @@ export class QuizzesController {
     @User() user: AuthenticatedUser,
     @Body() request: CreateQuizRequest,
   ) {
-    return this.createQuiz.execute({ ...request, userId: user.id });
+    return this._createQuiz.execute({ ...request, userId: user.id });
   }
 
   @UseGuards(JwtAuthGuard)
   @ApiOkResponse()
-  @Post('/:id/answer')
+  @Post('/:id/respostas')
   answer(
     @User() user: AuthenticatedUser,
     @Param('id', ParseIntPipe) quizId: QuizId,
     @Body() request: AnswerQuizRequest,
   ) {
-    return this.answerQuiz.execute({ quizId, userId: user.id, ...request });
+    return this._answerQuiz.execute({ quizId, userId: user.id, ...request });
+  }
+
+  @ApiOkResponse()
+  @Put('/:id/respostas/:answerId')
+  updateAnswer(
+    @Param('answerId', ParseIntPipe) quizAnswerId: QuizId,
+    @Body() request: UpdateAnswerRequest,
+  ) {
+    return this._updateAnswers.execute({
+      answerId: request.answerId,
+      quizAnswerId,
+    });
+  }
+
+  @ApiNoContentResponse()
+  @Delete('/:id/respostas/:answerId')
+  deleteAnswer(
+    @Param('answerId', ParseIntPipe) quizAnswerId: UserQuizAnswerId,
+  ) {
+    return this._deleteAnswer.execute({ quizAnswerId });
+  }
+
+  @PaginatedApiResponse(QuizListResponse)
+  @Get('/:id/respostas')
+  listAnswers(
+    @Param('id') quizId: QuizId,
+    @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number,
+    @Query('pageSize', new DefaultValuePipe(10), ParseIntPipe) pageSize: number,
+  ): Promise<PageResponse<any>> {
+    return this._listAnswers.execute({ page, pageSize, quizId });
   }
 }

@@ -1,4 +1,14 @@
 import { Module } from '@nestjs/common';
+import {
+  AddAnswersUseCase,
+  AddAnswersUseCaseImpl,
+  DeleteAnswerUseCase,
+  DeleteAnswerUseCaseImpl,
+  ListAnswersUseCase,
+  ListAnswersUseCaseImpl,
+  UpdateAnswerUseCase,
+  UpdateAnswerUseCaseImpl,
+} from 'src/core/usecases/answers';
 
 import {
   AnswerQuizUseCase,
@@ -43,6 +53,22 @@ import { QuizzesController } from './quizzes.controller';
     {
       provide: ListMyQuizzesUseCase,
       useClass: ListMyQuizzesUseCaseImpl,
+    },
+    {
+      provide: AddAnswersUseCase,
+      useClass: AddAnswersUseCaseImpl,
+    },
+    {
+      provide: UpdateAnswerUseCase,
+      useClass: UpdateAnswerUseCaseImpl,
+    },
+    {
+      provide: DeleteAnswerUseCase,
+      useClass: DeleteAnswerUseCaseImpl,
+    },
+    {
+      provide: ListAnswersUseCase,
+      useClass: ListAnswersUseCaseImpl,
     },
   ],
 })

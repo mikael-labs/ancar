@@ -4,6 +4,7 @@ import { UserRepository } from 'src/core/data';
 import { UserDTO } from 'src/core/dtos';
 import { User, UserId } from 'src/core/entities';
 import { NotFoundError } from 'src/core/errors';
+import { CryptoService } from 'src/core/services';
 
 export type UpdateUserUseCaseRequest = Omit<User, 'id'> & {
   id: UserId;
@@ -19,17 +20,27 @@ export abstract class UpdateUserUseCase {
 
 @Injectable()
 export class UpdateUserUseCaseImpl implements UpdateUserUseCase {
-  constructor(private _usuarioRepository: UserRepository) {}
+  constructor(
+    private _usuarioRepository: UserRepository,
+    private _cryptoService: CryptoService,
+  ) {}
 
   async execute({
     id,
+    password,
     ...usuarioProps
   }: UpdateUserUseCaseRequest): Promise<UpdateUserUseCaseResponse> {
     const userWithSameId = await this._usuarioRepository.getById(id);
 
     if (!userWithSameId) throw new NotFoundError('Usuário não encontrado');
 
-    const updatedUser = new User({ id, ...usuarioProps });
+    const newPassword = await this._cryptoService.encode(password);
+
+    const updatedUser = new User({
+      id,
+      password: newPassword,
+      ...usuarioProps,
+    });
 
     await this._usuarioRepository.update(updatedUser);
 

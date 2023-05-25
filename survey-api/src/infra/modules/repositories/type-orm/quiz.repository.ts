@@ -140,7 +140,7 @@ export class TypeORMQuizRepository implements QuizRepository {
 
     const total = results[0]?.total ?? 0;
     const totalPages = Math.ceil(total / pageSize);
-    const nextPage = page === totalPages ? null : page + 1;
+    const nextPage = page >= totalPages ? null : page + 1;
 
     const response = {
       items: quizzes,
@@ -229,12 +229,15 @@ export class TypeORMQuizRepository implements QuizRepository {
 
     const quizzes = quizzesDB.map((quizEntity) => quizEntity.toDomain());
 
+    const totalPages = Math.ceil(total / pageSize);
+    const nextPage = page >= totalPages ? null : page + 1;
+
     const quizzesPage: Page<Quiz> = {
       items: quizzes,
-      nextPage: null,
+      nextPage,
       page,
       total,
-      totalPages: Math.ceil(total / pageSize),
+      totalPages,
     };
 
     return quizzesPage;

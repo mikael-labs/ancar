@@ -54,9 +54,7 @@ export class CreateQuizUseCaseImpl implements CreateQuizUseCase {
       user,
     });
 
-    throw new NotFoundError('Usuário não encontrado');
-
-    const createdQuiz = await this._quizRepository.create(quiz);
+    const { user: _, ...createdQuiz } = await this._quizRepository.create(quiz);
 
     return createdQuiz;
   }

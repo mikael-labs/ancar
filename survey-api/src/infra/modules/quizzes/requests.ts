@@ -37,3 +37,8 @@ export class AnswerQuizRequest {
   @ApiProperty({ type: AnswerQuizRequestAnswer })
   answers: AnswerQuizRequestAnswer[];
 }
+
+export class UpdateAnswerRequest {
+  @ApiProperty()
+  answerId: AnswerId;
+}
