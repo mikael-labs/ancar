@@ -8,7 +8,6 @@ import { NotFoundError } from 'src/core/errors';
 export interface UpdateQuizUseCaseRequest {
   id: QuizId;
   name: string;
-  date: number;
   description: string;
   questions: CreateQuestionDTO[];
 }
@@ -28,7 +27,6 @@ export class UpdateQuizUseCaseImpl implements UpdateQuizUseCase {
   async execute({
     id,
     name,
-    date,
     questions: questionsDTO,
     description,
   }: UpdateQuizUseCaseRequest): Promise<UpdateQuizUseCaseResponse> {
@@ -44,10 +42,10 @@ export class UpdateQuizUseCaseImpl implements UpdateQuizUseCase {
 
     const updatedQuiz = new Quiz({
       id,
-      date,
       description,
       name,
       questions,
+      date: quiz.date,
       user: quiz.user,
     });
 

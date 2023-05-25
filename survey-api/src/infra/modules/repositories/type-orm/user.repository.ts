@@ -1,8 +1,10 @@
 import { Injectable } from '@nestjs/common';
-import { UserRepository } from 'src/core/data/usuario.repository';
-import { User, UserId } from 'src/core/entities/user';
-import { Page } from 'src/core/interfaces/page';
 import { DataSource, Repository } from 'typeorm';
+
+import { UserRepository } from 'src/core/data';
+import { User, UserId } from 'src/core/entities';
+import { Page } from 'src/core/interfaces/page';
+
 import { UserEntity } from './entities/user';
 
 @Injectable()

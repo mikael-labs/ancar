@@ -1,9 +1,10 @@
 import { Injectable } from '@nestjs/common';
-import { UserRepository } from 'src/core/data/usuario.repository';
-import { UserDTO } from 'src/core/dtos/user.dto';
-import { User } from 'src/core/entities/user';
+
+import { UserRepository } from 'src/core/data';
+import { UserDTO } from 'src/core/dtos';
+import { User } from 'src/core/entities';
 import { BadRequestError } from 'src/core/errors';
-import CryptoService from 'src/core/services/crypto.service';
+import { CryptoService } from 'src/core/services';
 
 export interface RegisterUserUseCaseRequest {
   CPF: string;

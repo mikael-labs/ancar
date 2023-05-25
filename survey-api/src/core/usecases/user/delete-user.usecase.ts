@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
-import { UserRepository } from 'src/core/data/usuario.repository';
-import { UserId } from 'src/core/entities/user';
+import { UserRepository } from 'src/core/data';
+import { UserId } from 'src/core/entities';
 
 export type DeleteUserUseCaseRequest = {
   id: UserId;

@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common/decorators';
-import { QuizRepository } from 'src/core/data/quiz.repository';
-import { QuizListDTO } from 'src/core/dtos/quiz-list.dto';
+
+import { QuizRepository } from 'src/core/data';
+import { QuizListDTO } from 'src/core/dtos';
 import { Page } from 'src/core/interfaces/page';
 
 export interface ListQuizzesUseCaseRequest {

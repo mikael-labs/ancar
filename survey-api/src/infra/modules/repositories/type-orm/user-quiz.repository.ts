@@ -1,10 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { QuizRepository } from 'src/core/data';
-import { UserQuizRepository } from 'src/core/data/user-quiz.repository';
-import { QuizId, UserId } from 'src/core/entities';
-import { UserQuizAnswer } from 'src/core/entities/user-quiz';
-import { DataSource, Repository } from 'typeorm';
+import { Repository } from 'typeorm';
+
+import { UserQuizRepository } from 'src/core/data';
+import { QuizId, UserId, UserQuizAnswer } from 'src/core/entities';
+
 import { QuizEntity } from './entities/quiz';
 import { UserEntity } from './entities/user';
 import { UserQuizAnswerEntity } from './entities/user-quiz-answer';

@@ -10,6 +10,7 @@ import {
   Query,
   UseGuards,
 } from '@nestjs/common';
+import { DefaultValuePipe } from '@nestjs/common/pipes';
 import {
   ApiCreatedResponse,
   ApiExtraModels,
@@ -17,23 +18,32 @@ import {
   ApiOkResponse,
   ApiTags,
 } from '@nestjs/swagger';
-import { QuizId } from 'src/core/entities/quiz';
-import { AnswerQuizUseCase } from 'src/core/usecases/quiz/answer-quiz.usecase';
-import { CreateQuizUseCase } from 'src/core/usecases/quiz/create-quiz.usecase';
-import { DeleteQuizUseCase } from 'src/core/usecases/quiz/delete-quiz.usecase';
-import { GetQuizByIdUseCase } from 'src/core/usecases/quiz/get-quiz-by-id.usecase';
-import { ListAnsweredQuizzesUseCase } from 'src/core/usecases/quiz/list-answered-quizes.usecase';
-import { ListMyQuizzesUseCase } from 'src/core/usecases/quiz/list-my-quizzes.usecase';
-import { ListQuizzesToAnswerUseCase } from 'src/core/usecases/quiz/list-quizzes-to-answer.usecase';
-import { ListQuizzesUseCase } from 'src/core/usecases/quiz/list-quizzes.usercase';
-import { UpdateQuizUseCase } from 'src/core/usecases/quiz/update-quiz.usecase';
+
+import { QuizId } from 'src/core/entities';
+
+import {
+  AnswerQuizUseCase,
+  CreateQuizUseCase,
+  DeleteQuizUseCase,
+  GetQuizByIdUseCase,
+  ListAnsweredQuizzesUseCase,
+  ListMyQuizzesUseCase,
+  ListQuizzesToAnswerUseCase,
+  ListQuizzesUseCase,
+  UpdateQuizUseCase,
+} from 'src/core/usecases/quiz';
+
 import { User } from '../auth/jwt/decorators';
 import { JwtAuthGuard } from '../auth/jwt/jwt.guard';
 import { AuthenticatedUser } from '../auth/types';
-import { ListPaginatedRequest } from '../shared/requests';
-import { PageResponse } from '../shared/responses';
-import { PaginatedApiResponse } from '../shared/utils';
-import { CreateQuizRequest } from './requests';
+
+import {
+  ListPaginatedRequest,
+  PageResponse,
+  PaginatedApiResponse,
+} from '../shared';
+
+import { AnswerQuizRequest, CreateQuizRequest } from './requests';
 import {
   MyQuizListResponse,
   QuizListResponse,
@@ -69,8 +79,8 @@ export class QuizzesController {
   @Get('/to-answer')
   listToAnswer(
     @User() { id }: AuthenticatedUser,
-    @Query('page', ParseIntPipe) page = 1,
-    @Query('pageSize', ParseIntPipe) pageSize = 10,
+    @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number,
+    @Query('pageSize', new DefaultValuePipe(10), ParseIntPipe) pageSize: number,
   ): Promise<PageResponse<QuizListResponse>> {
     return this.listQuizzesToAnswer.execute({ userId: id, page, pageSize });
   }
@@ -80,8 +90,8 @@ export class QuizzesController {
   @Get('/answered')
   listAnswered(
     @User() { id }: AuthenticatedUser,
-    @Query('page', ParseIntPipe) page = 1,
-    @Query('pageSize', ParseIntPipe) pageSize = 10,
+    @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number,
+    @Query('pageSize', new DefaultValuePipe(10), ParseIntPipe) pageSize: number,
   ): Promise<PageResponse<QuizListResponse>> {
     return this.listAnsweredQuizzes.execute({ userId: id, page, pageSize });
   }
@@ -91,8 +101,8 @@ export class QuizzesController {
   @Get('/my')
   listMy(
     @User() { id }: AuthenticatedUser,
-    @Query('page', ParseIntPipe) page = 1,
-    @Query('pageSize', ParseIntPipe) pageSize = 10,
+    @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number,
+    @Query('pageSize', new DefaultValuePipe(10), ParseIntPipe) pageSize: number,
   ) {
     return this.listMyQuizzes.execute({ userId: id, page, pageSize });
   }
@@ -105,7 +115,10 @@ export class QuizzesController {
 
   @ApiOkResponse({ type: QuizResponse })
   @Put('/:id')
-  update(@Param('id', ParseIntPipe) id: QuizId, @Body() request: any) {
+  update(
+    @Param('id', ParseIntPipe) id: QuizId,
+    @Body() request: CreateQuizRequest,
+  ) {
     return this.updateQuiz.execute({ ...request, id });
   }
 
@@ -131,7 +144,7 @@ export class QuizzesController {
   answer(
     @User() user: AuthenticatedUser,
     @Param('id', ParseIntPipe) quizId: QuizId,
-    @Body() request: any,
+    @Body() request: AnswerQuizRequest,
   ) {
     return this.answerQuiz.execute({ quizId, userId: user.id, ...request });
   }

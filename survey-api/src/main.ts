@@ -1,6 +1,7 @@
 import { NestFactory } from '@nestjs/core';
 import { DocumentBuilder } from '@nestjs/swagger';
 import { SwaggerModule } from '@nestjs/swagger/dist';
+
 import { AppModule } from './app.module';
 import { BaseErrorFilter } from './infra/error.filter';
 

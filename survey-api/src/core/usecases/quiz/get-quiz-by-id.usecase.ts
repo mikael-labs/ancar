@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
+
 import { QuizRepository } from 'src/core/data';
-import { QuizDTO } from 'src/core/dtos/quiz.dto';
+import { QuizDTO } from 'src/core/dtos';
 import { QuizId } from 'src/core/entities';
 
 export interface GetQuizByIdUseCaseRequest {

@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
-import { UserRepository } from 'src/core/data/usuario.repository';
-import { UserDTO } from 'src/core/dtos/user.dto';
+
+import { UserRepository } from 'src/core/data';
+import { UserDTO } from 'src/core/dtos';
 import { Page } from 'src/core/interfaces/page';
 
 export interface ListUsersUseCaseRequest {

@@ -1,20 +1,23 @@
 import { Module } from '@nestjs/common';
-import { ConfigModule } from '@nestjs/config';
-import { ConfigService } from '@nestjs/config/dist';
 import { TypeOrmModule, TypeOrmModuleOptions } from '@nestjs/typeorm';
 import { DataSource } from 'typeorm';
 
-import { UserRepository } from 'src/core/data/usuario.repository';
+import {
+  UserQuizRepository,
+  UserRepository,
+  QuizRepository,
+} from 'src/core/data';
+
 import { TypeORMUserRepository } from './user.repository';
 import { UserEntity } from './entities/user';
 import { TypeORMQuizRepository } from './quiz.repository';
-import { QuizRepository } from 'src/core/data/quiz.repository';
 import { QuizEntity } from './entities/quiz';
 import { QuestionEntity } from './entities/question';
 import { AnswerEntity } from './entities/answer';
-import { UserQuizRepository } from 'src/core/data/user-quiz.repository';
-import { TypeORMUserQuizRepository } from './user-quiz.repository';
 import { UserQuizAnswerEntity } from './entities/user-quiz-answer';
+
+import { TypeORMUserQuizRepository } from './user-quiz.repository';
+
 import { ConfigurationModule } from '../../configuration/configuration.module';
 import { ConfigurationService } from '../../configuration/configuration.service';
 

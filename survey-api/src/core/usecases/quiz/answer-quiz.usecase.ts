@@ -1,10 +1,19 @@
 import { Injectable } from '@nestjs/common';
+
 import { BadRequestError, NotFoundError } from 'src/core/errors';
+
 import { QuizRepository, UserRepository } from '../../data';
+
 import { UserQuizRepository } from '../../data/user-quiz.repository';
-import { AnswerId, QuestionId, QuizId, UserId } from '../../entities';
-import { QuizAnswer } from '../../entities/quiz-answer';
-import { UserQuizAnswer } from '../../entities/user-quiz';
+
+import {
+  AnswerId,
+  QuestionId,
+  QuizId,
+  UserId,
+  UserQuizAnswer,
+  QuizAnswer,
+} from '../../entities';
 
 export interface AnswerQuizUseCaseRequest {
   userId: UserId;

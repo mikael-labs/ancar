@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
-import { QuizRepository } from 'src/core/data/quiz.repository';
-import { QuizId } from 'src/core/entities/quiz';
+import { QuizRepository } from 'src/core/data';
+import { QuizId } from 'src/core/entities';
 
 export interface DeleteQuizUseCaseRequest {
   id: QuizId;

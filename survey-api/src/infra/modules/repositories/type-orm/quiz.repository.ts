@@ -1,10 +1,19 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { QuizRepository } from 'src/core/data/quiz.repository';
-import { Answer, Question, QuestionId, User, UserId } from 'src/core/entities';
-import { Quiz, QuizId } from 'src/core/entities/quiz';
-import { Page } from 'src/core/interfaces/page';
 import { Brackets, NotBrackets, Repository } from 'typeorm';
+
+import { QuizRepository } from 'src/core/data';
+import {
+  Answer,
+  Question,
+  QuestionId,
+  User,
+  UserId,
+  Quiz,
+  QuizId,
+} from 'src/core/entities';
+
+import { Page } from 'src/core/interfaces/page';
 import { QuizEntity } from './entities/quiz';
 
 type ListQuizzesWithNumberOfAnswersQueryResult = {

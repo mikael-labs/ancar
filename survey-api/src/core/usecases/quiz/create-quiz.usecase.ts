@@ -1,12 +1,11 @@
 import { Injectable } from '@nestjs/common';
-import { UserRepository } from 'src/core/data';
-import { QuizRepository } from 'src/core/data/quiz.repository';
-import { CreateQuestionDTO } from 'src/core/dtos/create-question.dto';
-import { QuizDTO } from 'src/core/dtos/quiz.dto';
-import { UserId } from 'src/core/entities';
-import { Answer } from 'src/core/entities/answer';
-import { Question } from 'src/core/entities/question';
-import { Quiz } from 'src/core/entities/quiz';
+
+import { QuizRepository, UserRepository } from 'src/core/data';
+
+import { CreateQuestionDTO, QuizDTO } from 'src/core/dtos';
+
+import { UserId, Answer, Question, Quiz } from 'src/core/entities';
+
 import { NotFoundError } from 'src/core/errors';
 
 export interface CreateQuizUseCaseRequest {

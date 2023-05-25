@@ -1,5 +1,6 @@
 import { Body, Controller, Post } from '@nestjs/common';
 import { ApiOkResponse, ApiTags } from '@nestjs/swagger';
+
 import { LoginUseCase } from 'src/core/usecases/auth/login.usecase';
 import { LoginRequest } from './requests';
 import { LoginResponse } from './responses';

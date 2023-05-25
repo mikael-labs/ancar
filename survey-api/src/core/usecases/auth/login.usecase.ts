@@ -1,8 +1,9 @@
 import { Injectable } from '@nestjs/common';
+
 import { UserRepository } from 'src/core/data';
 import { InvalidCredentialsError } from 'src/core/errors';
-import CryptoService from 'src/core/services/crypto.service';
-import { TokenService } from 'src/core/services/token.service';
+
+import { TokenService, CryptoService } from 'src/core/services';
 
 export interface LoginUseCaseRequest {
   CPF: string;

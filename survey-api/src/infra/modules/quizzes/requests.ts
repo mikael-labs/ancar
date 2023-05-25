@@ -1,4 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
+import { AnswerId, QuestionId, QuizId } from 'src/core/entities';
 
 export class CreateAnswerRequest {
   @ApiProperty()
@@ -22,4 +23,17 @@ export class CreateQuizRequest {
 
   @ApiProperty({ type: [CreateQuestionRequest] })
   questions: CreateQuestionRequest[];
+}
+
+export class AnswerQuizRequestAnswer {
+  @ApiProperty()
+  questionId: QuestionId;
+
+  @ApiProperty()
+  answerId: AnswerId;
+}
+
+export class AnswerQuizRequest {
+  @ApiProperty({ type: AnswerQuizRequestAnswer })
+  answers: AnswerQuizRequestAnswer[];
 }

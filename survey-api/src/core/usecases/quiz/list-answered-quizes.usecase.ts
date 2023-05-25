@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { QuizRepository } from 'src/core/data';
-import { QuizListDTO } from 'src/core/dtos/quiz-list.dto';
+
+import { QuizListDTO } from 'src/core/dtos';
 import { UserId } from 'src/core/entities';
 import { Page } from 'src/core/interfaces/page';
 

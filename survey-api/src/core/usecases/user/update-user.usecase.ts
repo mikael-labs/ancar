@@ -1,7 +1,8 @@
 import { Injectable } from '@nestjs/common';
-import { UserRepository } from 'src/core/data/usuario.repository';
-import { UserDTO } from 'src/core/dtos/user.dto';
-import { User, UserId } from 'src/core/entities/user';
+
+import { UserRepository } from 'src/core/data';
+import { UserDTO } from 'src/core/dtos';
+import { User, UserId } from 'src/core/entities';
 import { NotFoundError } from 'src/core/errors';
 
 export type UpdateUserUseCaseRequest = Omit<User, 'id'> & {

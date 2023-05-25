@@ -10,19 +10,26 @@ import {
   Put,
   Query,
 } from '@nestjs/common';
+import { DefaultValuePipe } from '@nestjs/common/pipes';
 import {
   ApiCreatedResponse,
   ApiNoContentResponse,
   ApiOkResponse,
   ApiTags,
 } from '@nestjs/swagger';
-import { UserId } from 'src/core/entities/user';
-import { DeleteUserUseCase } from 'src/core/usecases/user/delete-user.usecase';
-import { ListUsersUseCase } from 'src/core/usecases/user/list-users.usecase';
-import { PatchUserUseCase } from 'src/core/usecases/user/patch-user.usecase';
-import { RegisterUserUseCase } from 'src/core/usecases/user/register-user.usecase';
-import { UpdateUserUseCase } from 'src/core/usecases/user/update-user.usecase';
+
+import { UserId } from 'src/core/entities';
+
+import {
+  DeleteUserUseCase,
+  ListUsersUseCase,
+  PatchUserUseCase,
+  RegisterUserUseCase,
+  UpdateUserUseCase,
+} from 'src/core/usecases/user';
+
 import { PaginatedApiResponse } from '../shared/utils';
+
 import { RegisterUserRequest, UpdateUserRequest } from './requests';
 import { UserResponse } from './responses';
 
@@ -40,8 +47,8 @@ export class UsersController {
   @PaginatedApiResponse(UserResponse)
   @Get('/')
   getUsers(
-    @Query('page', ParseIntPipe) page = 1,
-    @Query('pageSize', ParseIntPipe) pageSize = 10,
+    @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number,
+    @Query('pageSize', new DefaultValuePipe(10), ParseIntPipe) pageSize: number,
   ) {
     return this.listUsers.execute({ page, pageSize });
   }
