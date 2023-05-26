@@ -50,6 +50,7 @@ import {
 } from './requests';
 import {
   AnswerQuizResponse,
+  AnswersReportResponse,
   MyQuizListResponse,
   QuizAnswerResponse,
   QuizListResponse,
@@ -196,6 +197,7 @@ export class QuizzesController {
     return this._listAnswers.execute({ page, pageSize, quizId });
   }
 
+  @ApiOkResponse({ type: AnswersReportResponse })
   @Get('/:id/respostas/relatorio')
   getReport(@Param('id', ParseIntPipe) quizId: QuizId) {
     return this._getQuizReport.execute({ quizId });

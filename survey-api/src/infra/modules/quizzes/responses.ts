@@ -18,7 +18,7 @@ export class QuizListResponse {
   numberOfQuestions: number;
 }
 
-export class AnswerResponse {
+class AnswerResponse {
   @ApiProperty()
   id: AnswerId;
 
@@ -26,7 +26,7 @@ export class AnswerResponse {
   description: string;
 }
 
-export class QuestionResponse {
+class QuestionResponse {
   @ApiProperty()
   id: QuestionId;
 
@@ -110,4 +110,43 @@ export class QuizAnswerResponse {
 
   @ApiProperty()
   answer: AnswerResponse;
+}
+
+class AnswersReportAnswerResponse {
+  @ApiProperty()
+  id: AnswerId;
+
+  @ApiProperty()
+  description: string;
+
+  @ApiProperty()
+  timesSelected: number;
+}
+
+class AnswersReportQuestionResponse {
+  @ApiProperty()
+  id: QuestionId;
+
+  @ApiProperty()
+  description: string;
+
+  @ApiProperty({ type: [AnswersReportAnswerResponse] })
+  answers: AnswersReportAnswerResponse[];
+}
+
+export class AnswersReportResponse {
+  @ApiProperty()
+  id: QuizId;
+
+  @ApiProperty()
+  name: string;
+
+  @ApiProperty()
+  description: string;
+
+  @ApiProperty()
+  date: number;
+
+  @ApiProperty({ type: [AnswersReportQuestionResponse] })
+  questions: AnswersReportQuestionResponse[];
 }
