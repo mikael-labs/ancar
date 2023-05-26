@@ -1,4 +1,4 @@
-import { ApiProperty } from '@nestjs/swagger';
+import { ApiProperty, PartialType } from '@nestjs/swagger';
 import { AnswerId, QuestionId, QuizId } from 'src/core/entities';
 
 export class CreateAnswerRequest {
@@ -24,6 +24,8 @@ export class CreateQuizRequest {
   @ApiProperty({ type: [CreateQuestionRequest] })
   questions: CreateQuestionRequest[];
 }
+
+export class PatchQuizResquest extends PartialType(CreateQuizRequest) {}
 
 export class AnswerQuizRequestAnswer {
   @ApiProperty()

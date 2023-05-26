@@ -31,6 +31,8 @@ import {
   ListQuizzesToAnswerUseCaseImpl,
   ListQuizzesUseCase,
   ListQuizzesUseCaseImpl,
+  PatchQuizUseCase,
+  PatchQuizUseCaseImpl,
   UpdateQuizUseCase,
   UpdateQuizUseCaseImpl,
 } from 'src/core/usecases/quiz';
@@ -77,6 +79,10 @@ import { QuizzesController } from './quizzes.controller';
     {
       provide: GetQuizAnswersReportUseCase,
       useClass: GetQuizAnswersReportUseCaseImpl,
+    },
+    {
+      provide: PatchQuizUseCase,
+      useClass: PatchQuizUseCaseImpl,
     },
   ],
 })

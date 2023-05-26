@@ -49,6 +49,6 @@ export class UpdateQuizUseCaseImpl implements UpdateQuizUseCase {
       user: quiz.user,
     });
 
-    return this._quizRepository.update(updatedQuiz);
+    return this._quizRepository.update(updatedQuiz).then(QuizDTO.fromDomain);
   }
 }

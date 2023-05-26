@@ -54,8 +54,6 @@ export class CreateQuizUseCaseImpl implements CreateQuizUseCase {
       user,
     });
 
-    const { user: _, ...createdQuiz } = await this._quizRepository.create(quiz);
-
-    return createdQuiz;
+    return this._quizRepository.create(quiz).then(QuizDTO.fromDomain);
   }
 }

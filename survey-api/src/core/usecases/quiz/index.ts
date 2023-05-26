@@ -7,3 +7,4 @@ export * from './list-my-quizzes.usecase';
 export * from './list-quizzes-to-answer.usecase';
 export * from './list-quizzes.usercase';
 export * from './update-quiz.usecase';
+export * from './patch-quiz.usecase';

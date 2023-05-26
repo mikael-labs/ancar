@@ -5,6 +5,7 @@ import {
   Get,
   Param,
   ParseIntPipe,
+  Patch,
   Post,
   Put,
   Query,
@@ -36,6 +37,7 @@ import {
   ListQuizzesUseCase,
   UpdateQuizUseCase,
 } from 'src/core/usecases/quiz';
+import { PatchQuizUseCase } from 'src/core/usecases/quiz/patch-quiz.usecase';
 
 import { User } from '../auth/jwt/decorators';
 import { JwtAuthGuard } from '../auth/jwt/jwt.guard';
@@ -46,6 +48,7 @@ import { PageResponse, PaginatedApiResponse } from '../shared';
 import {
   AnswerQuizRequest,
   CreateQuizRequest,
+  PatchQuizResquest,
   UpdateAnswerRequest,
 } from './requests';
 import {
@@ -80,6 +83,7 @@ export class QuizzesController {
     private readonly _updateAnswers: UpdateAnswerUseCase,
     private readonly _listAnswers: ListAnswersUseCase,
     private readonly _getQuizReport: GetQuizAnswersReportUseCase,
+    private readonly _patchQuiz: PatchQuizUseCase,
   ) {}
 
   @PaginatedApiResponse(QuizListResponse)
@@ -137,6 +141,15 @@ export class QuizzesController {
     @Body() request: CreateQuizRequest,
   ) {
     return this._updateQuiz.execute({ ...request, id });
+  }
+
+  @ApiOkResponse({ type: QuizResponse })
+  @Patch('/:id')
+  patch(
+    @Param('id', ParseIntPipe) id: QuizId,
+    @Body() request: PatchQuizResquest,
+  ) {
+    return this._patchQuiz.execute({ ...request, id });
   }
 
   @ApiNoContentResponse()
