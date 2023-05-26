@@ -14,9 +14,9 @@ import { TypeORMQuizRepository } from './quiz.repository';
 import { QuizEntity } from './entities/quiz';
 import { QuestionEntity } from './entities/question';
 import { AnswerEntity } from './entities/answer';
-import { UserQuizAnswerEntity } from './entities/user-quiz-answer';
+import { QuizAnswerEntity } from './entities/quiz-answer';
 
-import { TypeORMUserQuizRepository } from './user-quiz.repository';
+import { TypeORMUQuizAnswerRepository } from './user-quiz.repository';
 
 import { ConfigurationModule } from '../../configuration/configuration.module';
 import { ConfigurationService } from '../../configuration/configuration.service';
@@ -26,7 +26,7 @@ const entities = [
   AnswerEntity,
   QuestionEntity,
   QuizEntity,
-  UserQuizAnswerEntity,
+  QuizAnswerEntity,
 ];
 
 const getTypeORMConfig = (
@@ -60,7 +60,7 @@ const getTypeORMConfig = (
   providers: [
     { provide: UserRepository, useClass: TypeORMUserRepository },
     { provide: QuizRepository, useClass: TypeORMQuizRepository },
-    { provide: QuizAnswerRepository, useClass: TypeORMUserQuizRepository },
+    { provide: QuizAnswerRepository, useClass: TypeORMUQuizAnswerRepository },
   ],
   exports: [UserRepository, QuizRepository, QuizAnswerRepository],
 })

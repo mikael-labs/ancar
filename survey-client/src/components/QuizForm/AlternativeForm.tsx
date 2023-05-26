@@ -18,7 +18,7 @@ export const AlternativeForm = ({ onRemove, quizForm, questionIndex, index }: Pr
   return (
     <HStack className="justify-center gap-2">
       <Box className="flex items-center gap-x-3 flex-auto">
-        <Radio disabled />
+        <Radio disabled isDisabled />
 
         <FormControl
           isInvalid={getIsInvalid(quizForm, `questions.${questionIndex}.answers.${index}.description`)}

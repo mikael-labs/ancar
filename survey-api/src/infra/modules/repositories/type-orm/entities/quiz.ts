@@ -10,9 +10,9 @@ import {
 } from 'typeorm';
 import { QuestionEntity } from './question';
 import { UserEntity } from './user';
-import { UserQuizAnswerEntity } from './user-quiz-answer';
+import { QuizAnswerEntity } from './quiz-answer';
 
-@Entity()
+@Entity('quiz')
 export class QuizEntity extends BaseEntity {
   @PrimaryGeneratedColumn()
   id: number;
@@ -31,10 +31,10 @@ export class QuizEntity extends BaseEntity {
   })
   questions: QuestionEntity[];
 
-  @OneToMany(() => UserQuizAnswerEntity, (answer) => answer.quiz, {
+  @OneToMany(() => QuizAnswerEntity, (answer) => answer.quiz, {
     cascade: true,
   })
-  answers: UserQuizAnswerEntity[];
+  answers: QuizAnswerEntity[];
 
   @ManyToOne(() => UserEntity)
   user: UserEntity;

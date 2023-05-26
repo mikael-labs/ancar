@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { QuizAnswerRepository } from 'src/core/data';
-import { QuizId, UserQuizAnswer } from 'src/core/entities';
+import { QuizId, QuizAnswer } from 'src/core/entities';
 import { Page } from 'src/core/interfaces/page';
 
 export interface ListAnswersUseCaseRequest {
@@ -9,7 +9,7 @@ export interface ListAnswersUseCaseRequest {
   pageSize: number;
 }
 
-export type ListAnswersUseCaseResponse = Page<UserQuizAnswer>;
+export type ListAnswersUseCaseResponse = Page<QuizAnswer>;
 
 export abstract class ListAnswersUseCase {
   abstract execute(

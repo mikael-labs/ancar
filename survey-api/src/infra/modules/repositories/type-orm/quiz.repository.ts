@@ -62,11 +62,11 @@ export class TypeORMQuizRepository implements QuizRepository {
         a.id as answerId, a."questionId" as answerQuestionId, a.description as answerDescription, 
         u.id as userId, u.name as userName, u."CPF" as userCPF, u.password as userPassword,
         joint.numberOfAnswers, COUNT(*) OVER () as total     
-      FROM quiz_entity qui
-        LEFT JOIN question_entity que ON que."quizId" = qui.id
-        LEFT JOIN answer_entity a ON que.id = a."questionId"
-        LEFT JOIN user_entity u ON u.id = qui.id
-        LEFT JOIN (SELECT ua."quizId", ua."userId", COUNT(DISTINCT (ua."quizId", ua."userId")) as numberOfAnswers FROM user_quiz_answer_entity ua GROUP BY ua."quizId", ua."userId") joint ON joint."quizId" = qui.id
+      FROM quiz qui
+        LEFT JOIN question que ON que."quizId" = qui.id
+        LEFT JOIN answer a ON que.id = a."questionId"
+        LEFT JOIN "user" u ON u.id = qui.id
+        LEFT JOIN (SELECT ua."quizId", ua."userId", COUNT(DISTINCT (ua."quizId", ua."userId")) as numberOfAnswers FROM "quiz-answer" ua GROUP BY ua."quizId", ua."userId") joint ON joint."quizId" = qui.id
       WHERE qui."userId" = $1
       GROUP BY qui.id, que.id, a.id, u.id, joint.numberOfAnswers
       OFFSET $2 LIMIT $3

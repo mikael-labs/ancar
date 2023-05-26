@@ -1,7 +1,7 @@
 import { HttpClient, httpClient } from "../http/HttpClient";
 import { Page } from "../types";
 import { AnswerQuizRequest, CreateQuizRequest, GetQuizzesRequest, UpdateQuizRequest } from "./requests";
-import { MyQuizListItem, Quiz, QuizListItem } from "./responses";
+import { MyQuizListItem, Quiz, QuizListItem, QuizReport } from "./responses";
 
 export interface QuizService {
   getQuizzes(request: GetQuizzesRequest): Promise<Page<QuizListItem>>;
@@ -12,10 +12,17 @@ export interface QuizService {
   getAnsweredQuizzes(request: GetQuizzesRequest): Promise<Page<QuizListItem>>;
   getMyQuizzes(request: GetQuizzesRequest): Promise<Page<MyQuizListItem>>;
   deleteQuiz(quizId: number): Promise<void>;
+  getQuizReport(quizId: number): Promise<QuizReport>;
 }
 
 class QuizServiceImpl implements QuizService {
   constructor(private _httpClient: HttpClient) {}
+
+  getQuizReport(quizId: number): Promise<QuizReport> {
+    return this._httpClient
+      .get(`/questionarios/${quizId}/respostas/relatorio`)
+      .then((res) => new Promise<any>((resolve) => setTimeout(() => resolve(res), 3000)));
+  }
 
   deleteQuiz(quizId: number): Promise<void> {
     return this._httpClient.delete(`/questionarios/${quizId}`);

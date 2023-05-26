@@ -19,9 +19,10 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 
-import { QuizId, UserQuizAnswerId } from 'src/core/entities';
+import { QuizId, QuizAnswerId } from 'src/core/entities';
 import { AddAnswersUseCase } from 'src/core/usecases/answers/add-answers.usecase';
 import { DeleteAnswerUseCase } from 'src/core/usecases/answers/delete-answer.usecase';
+import { GetQuizAnswersReportUseCase } from 'src/core/usecases/answers/get-answers-report.usecase';
 import { ListAnswersUseCase } from 'src/core/usecases/answers/list-answers.usecase';
 import { UpdateAnswerUseCase } from 'src/core/usecases/answers/update-answers.usecase';
 
@@ -48,13 +49,20 @@ import {
   UpdateAnswerRequest,
 } from './requests';
 import {
+  AnswerQuizResponse,
   MyQuizListResponse,
+  QuizAnswerResponse,
   QuizListResponse,
   QuizResponse,
 } from './responses';
 
 @ApiTags('questionarios')
-@ApiExtraModels(PageResponse, QuizListResponse, MyQuizListResponse)
+@ApiExtraModels(
+  PageResponse,
+  QuizListResponse,
+  MyQuizListResponse,
+  QuizAnswerResponse,
+)
 @Controller('questionarios')
 export class QuizzesController {
   constructor(
@@ -70,6 +78,7 @@ export class QuizzesController {
     private readonly _deleteAnswer: DeleteAnswerUseCase,
     private readonly _updateAnswers: UpdateAnswerUseCase,
     private readonly _listAnswers: ListAnswersUseCase,
+    private readonly _getQuizReport: GetQuizAnswersReportUseCase,
   ) {}
 
   @PaginatedApiResponse(QuizListResponse)
@@ -146,7 +155,10 @@ export class QuizzesController {
   }
 
   @UseGuards(JwtAuthGuard)
-  @ApiOkResponse()
+  @ApiOkResponse({
+    type: AnswerQuizResponse,
+    isArray: true,
+  })
   @Post('/:id/respostas')
   answer(
     @User() user: AuthenticatedUser,
@@ -170,19 +182,22 @@ export class QuizzesController {
 
   @ApiNoContentResponse()
   @Delete('/:id/respostas/:answerId')
-  deleteAnswer(
-    @Param('answerId', ParseIntPipe) quizAnswerId: UserQuizAnswerId,
-  ) {
+  deleteAnswer(@Param('answerId', ParseIntPipe) quizAnswerId: QuizAnswerId) {
     return this._deleteAnswer.execute({ quizAnswerId });
   }
 
-  @PaginatedApiResponse(QuizListResponse)
+  @PaginatedApiResponse(QuizAnswerResponse)
   @Get('/:id/respostas')
   listAnswers(
-    @Param('id') quizId: QuizId,
+    @Param('id', ParseIntPipe) quizId: QuizId,
     @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number,
     @Query('pageSize', new DefaultValuePipe(10), ParseIntPipe) pageSize: number,
   ): Promise<PageResponse<any>> {
     return this._listAnswers.execute({ page, pageSize, quizId });
+  }
+
+  @Get('/:id/respostas/relatorio')
+  getReport(@Param('id', ParseIntPipe) quizId: QuizId) {
+    return this._getQuizReport.execute({ quizId });
   }
 }

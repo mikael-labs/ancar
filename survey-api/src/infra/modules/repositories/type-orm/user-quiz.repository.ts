@@ -3,22 +3,36 @@ import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { QuizAnswerRepository } from 'src/core/data';
-import {
-  QuizId,
-  UserId,
-  UserQuizAnswer,
-  UserQuizAnswerId,
-} from 'src/core/entities';
+import { QuizId, UserId, QuizAnswer, QuizAnswerId } from 'src/core/entities';
 
-import { UserQuizAnswerEntity } from './entities/user-quiz-answer';
+import { QuizAnswerEntity } from './entities/quiz-answer';
 import { Page } from 'src/core/interfaces/page';
 
 @Injectable()
-export class TypeORMUserQuizRepository implements QuizAnswerRepository {
+export class TypeORMUQuizAnswerRepository implements QuizAnswerRepository {
   constructor(
-    @InjectRepository(UserQuizAnswerEntity)
-    private _userQuizRepository: Repository<UserQuizAnswerEntity>,
+    @InjectRepository(QuizAnswerEntity)
+    private _userQuizRepository: Repository<QuizAnswerEntity>,
   ) {}
+
+  listAllByQuiz(quizId: number): Promise<QuizAnswer[]> {
+    return this._userQuizRepository
+      .find({
+        where: {
+          quiz: {
+            id: quizId,
+          },
+        },
+        relations: {
+          question: {
+            answers: true,
+          },
+          quiz: true,
+          answer: true,
+        },
+      })
+      .then((answersDB) => answersDB.map((answerDB) => answerDB.toDomain()));
+  }
 
   async listByQuiz({
     page,
@@ -28,7 +42,7 @@ export class TypeORMUserQuizRepository implements QuizAnswerRepository {
     quizId: number;
     page: number;
     pageSize: number;
-  }): Promise<Page<UserQuizAnswer>> {
+  }): Promise<Page<QuizAnswer>> {
     const skip = (page - 1) * pageSize;
 
     const [quizAnswers, total] = await this._userQuizRepository.findAndCount({
@@ -58,24 +72,22 @@ export class TypeORMUserQuizRepository implements QuizAnswerRepository {
     };
   }
 
-  async update(quizAnswer: UserQuizAnswer): Promise<UserQuizAnswer> {
+  async update(quizAnswer: QuizAnswer): Promise<QuizAnswer> {
     await this._userQuizRepository.update(
       quizAnswer.id,
-      UserQuizAnswerEntity.fromDomain(quizAnswer),
+      QuizAnswerEntity.fromDomain(quizAnswer),
     );
 
     return quizAnswer;
   }
 
-  getById(quizAnwerId: number): Promise<UserQuizAnswer | null> {
+  getById(quizAnwerId: number): Promise<QuizAnswer | null> {
     return this._userQuizRepository
       .findOne({ where: { id: quizAnwerId } })
       .then((quizAnswer) => quizAnswer?.toDomain() ?? null);
   }
 
-  async delete(
-    quizAnswerId: UserQuizAnswerId | UserQuizAnswerId[],
-  ): Promise<void> {
+  async delete(quizAnswerId: QuizAnswerId | QuizAnswerId[]): Promise<void> {
     if (!Array.isArray(quizAnswerId)) quizAnswerId = [quizAnswerId];
 
     await this._userQuizRepository.delete(quizAnswerId);
@@ -84,7 +96,7 @@ export class TypeORMUserQuizRepository implements QuizAnswerRepository {
   async getByQuizAndUser(
     quizId: QuizId,
     userId: UserId,
-  ): Promise<UserQuizAnswer[]> {
+  ): Promise<QuizAnswer[]> {
     const answers = await this._userQuizRepository.find({
       where: {
         quiz: {
@@ -94,14 +106,18 @@ export class TypeORMUserQuizRepository implements QuizAnswerRepository {
           id: userId,
         },
       },
+      relations: {
+        question: true,
+        quiz: true,
+      },
     });
 
     return answers.map((answer) => answer.toDomain());
   }
 
-  saveUserQuizAnswers(answers: UserQuizAnswer[]): Promise<UserQuizAnswer[]> {
+  saveUserQuizAnswers(answers: QuizAnswer[]): Promise<QuizAnswer[]> {
     const answersDB = answers.map((answer) =>
-      UserQuizAnswerEntity.fromDomain(answer),
+      QuizAnswerEntity.fromDomain(answer),
     );
 
     return this._userQuizRepository

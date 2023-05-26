@@ -4,9 +4,10 @@ import { useNavigate } from "react-router-dom";
 
 type Props = {
   className?: string;
+  isDisabled?: boolean;
 };
 
-export const BackButton = ({ className }: Props) => {
+export const BackButton = ({ className, isDisabled }: Props) => {
   const navigate = useNavigate();
 
   return (
@@ -18,6 +19,7 @@ export const BackButton = ({ className }: Props) => {
       variant="link"
       size="lg"
       onClick={() => navigate(-1)}
+      isDisabled={isDisabled}
     />
   );
 };

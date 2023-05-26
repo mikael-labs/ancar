@@ -28,3 +28,19 @@ export type Quiz = {
   description: string;
   questions: Question[];
 };
+
+export type QuizReportQuestionAnswer = { id: number; description: string; timesSelected: number };
+
+export type QuizReportQuestion = {
+  id: number;
+  description: string;
+  answers: QuizReportQuestionAnswer[];
+};
+
+export type QuizReport = {
+  id: QuizId;
+  name: string;
+  description: string;
+  date: number;
+  questions: QuizReportQuestion[];
+};

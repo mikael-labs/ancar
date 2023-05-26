@@ -39,7 +39,7 @@ export const QuizForm = ({ onSubmit, initialValues }: Props) => {
     <Card width={800}>
       <form onSubmit={quizForm.handleSubmit} noValidate>
         <CardHeader>
-          <BackButton className="mb-5" />
+          <BackButton className="mb-5" isDisabled={quizForm.isSubmitting} />
 
           <FormControl isInvalid={!!quizForm.errors["name"]} isDisabled={quizForm.isSubmitting}>
             <Input

@@ -4,14 +4,13 @@ import { BadRequestError, NotFoundError } from 'src/core/errors';
 
 import { QuizRepository, UserRepository } from '../../data';
 
-import { QuizAnswerRepository } from '../../data/user-quiz.repository';
+import { QuizAnswerRepository } from '../../data/quiz-answer.repository';
 
 import {
   AnswerId,
   QuestionId,
   QuizId,
   UserId,
-  UserQuizAnswer,
   QuizAnswer,
 } from '../../entities';
 
@@ -80,7 +79,7 @@ export class AnswerQuizUseCaseImpl implements AnswerQuizUseCase {
           `Alternativa ${answerRequest.answerId} não encontrada.`,
         );
 
-      return new UserQuizAnswer({
+      return new QuizAnswer({
         user,
         quiz,
         question,

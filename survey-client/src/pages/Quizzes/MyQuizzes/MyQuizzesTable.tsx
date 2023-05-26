@@ -40,6 +40,8 @@ export const MyQuizzesTable = ({ quizzes, onRemoveQuiz }: Props) => {
                     variant="link"
                     title={`Clique para visualizar as respostas o quiz ${quiz.name}`}
                     aria-label={`Clique para visualizar as respostas o quiz ${quiz.name}`}
+                    as={Link}
+                    to={`/quizzes/${quiz.id}/report`}
                     icon={<ViewIcon />}
                   />
                   <IconButton

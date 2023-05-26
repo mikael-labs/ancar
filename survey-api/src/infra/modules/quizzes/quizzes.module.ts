@@ -9,6 +9,10 @@ import {
   UpdateAnswerUseCase,
   UpdateAnswerUseCaseImpl,
 } from 'src/core/usecases/answers';
+import {
+  GetQuizAnswersReportUseCase,
+  GetQuizAnswersReportUseCaseImpl,
+} from 'src/core/usecases/answers/get-answers-report.usecase';
 
 import {
   AnswerQuizUseCase,
@@ -69,6 +73,10 @@ import { QuizzesController } from './quizzes.controller';
     {
       provide: ListAnswersUseCase,
       useClass: ListAnswersUseCaseImpl,
+    },
+    {
+      provide: GetQuizAnswersReportUseCase,
+      useClass: GetQuizAnswersReportUseCaseImpl,
     },
   ],
 })

@@ -18,7 +18,7 @@ export const AnswerQuestion = ({ question, answerQuizForm, index }: Props) => {
   const answerValue = answerQuizForm.values.answers[index]?.answerId.toString();
 
   return (
-    <Card key={question.id}>
+    <Card>
       <CardHeader>{question.description}</CardHeader>
       <CardBody>
         <FormControl

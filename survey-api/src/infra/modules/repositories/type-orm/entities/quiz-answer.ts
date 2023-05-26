@@ -1,13 +1,13 @@
-import { UserQuizAnswer } from 'src/core/entities/user-quiz';
+import { QuizAnswer } from 'src/core/entities/quiz-answer';
 import { Entity, ManyToOne, PrimaryGeneratedColumn, Unique } from 'typeorm';
 import { AnswerEntity } from './answer';
 import { QuestionEntity } from './question';
 import { QuizEntity } from './quiz';
 import { UserEntity } from './user';
 
-@Entity()
+@Entity('quiz-answer')
 @Unique(['user', 'quiz', 'question'])
-export class UserQuizAnswerEntity {
+export class QuizAnswerEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
@@ -25,8 +25,8 @@ export class UserQuizAnswerEntity {
   @ManyToOne(() => QuestionEntity)
   question: QuestionEntity;
 
-  static fromDomain(userQuiz: UserQuizAnswer): UserQuizAnswerEntity {
-    const userQuizAnswer = new UserQuizAnswerEntity();
+  static fromDomain(userQuiz: QuizAnswer): QuizAnswerEntity {
+    const userQuizAnswer = new QuizAnswerEntity();
 
     userQuizAnswer.id = userQuiz.id;
     userQuizAnswer.answer = AnswerEntity.fromDomain(userQuiz.answer);
@@ -37,8 +37,8 @@ export class UserQuizAnswerEntity {
     return userQuizAnswer;
   }
 
-  toDomain(): UserQuizAnswer {
-    return new UserQuizAnswer({
+  toDomain(): QuizAnswer {
+    return new QuizAnswer({
       id: this.id,
       answer: this.answer,
       question: this.question,

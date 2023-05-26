@@ -4,13 +4,14 @@ import {
   QuizAnswerRepository,
   UserRepository,
 } from 'src/core/data';
+import { QuestionDTO } from 'src/core/dtos';
 import {
+  Answer,
   AnswerId,
   QuestionId,
-  QuizAnswer,
   QuizId,
   UserId,
-  UserQuizAnswer,
+  QuizAnswer,
 } from 'src/core/entities';
 import { BadRequestError, NotFoundError } from 'src/core/errors';
 
@@ -23,7 +24,10 @@ export interface AddAnswersUseCaseRequest {
   }[];
 }
 
-export type AddAnswersUseCaseResponse = any;
+export type AddAnswersUseCaseResponse = {
+  question: Omit<QuestionDTO, 'answers'>;
+  answer: Answer;
+}[];
 
 export abstract class AddAnswersUseCase {
   abstract execute(
@@ -79,7 +83,7 @@ export class AddAnswersUseCaseImpl implements AddAnswersUseCase {
           `Alternativa ${answerRequest.answerId} não encontrada.`,
         );
 
-      return new UserQuizAnswer({
+      return new QuizAnswer({
         user,
         quiz,
         question,
@@ -87,6 +91,18 @@ export class AddAnswersUseCaseImpl implements AddAnswersUseCase {
       });
     });
 
-    return this._userQuizRepository.saveUserQuizAnswers(quizAnswers);
+    return this._userQuizRepository
+      .saveUserQuizAnswers(quizAnswers)
+      .then((answers) =>
+        answers.map((quizAnswers) => {
+          const { answers: questionAnswers, ...question } =
+            quizAnswers.question;
+
+          return {
+            question,
+            answer: quizAnswers.answer,
+          };
+        }),
+      );
   }
 }

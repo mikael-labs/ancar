@@ -8,7 +8,7 @@ import {
 } from 'typeorm';
 import { QuestionEntity } from './question';
 
-@Entity()
+@Entity('answer')
 export class AnswerEntity extends BaseEntity {
   @PrimaryGeneratedColumn()
   id: number;

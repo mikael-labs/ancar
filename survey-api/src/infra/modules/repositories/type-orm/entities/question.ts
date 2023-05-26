@@ -11,7 +11,7 @@ import {
 import { AnswerEntity } from './answer';
 import { QuizEntity } from './quiz';
 
-@Entity()
+@Entity('question')
 export class QuestionEntity extends BaseEntity {
   @PrimaryGeneratedColumn()
   id: number;

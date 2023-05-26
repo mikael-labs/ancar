@@ -60,7 +60,7 @@ export const AnswerQuiz = () => {
         {data && questions && (
           <Card width={800}>
             <CardHeader>
-              <BackButton className="mb-5" />
+              <BackButton className="mb-5" isDisabled={answerQuizForm.isSubmitting} />
 
               <Heading size="lg" className="mb-4" color="primary.dark">
                 {data.name}
