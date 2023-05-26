@@ -25,8 +25,14 @@ Dito isso, crie um arquivo .env na raiz do projeto especificando essas variávei
 Para rodar o projeto execute:
 
 ```bash
+#development
 npm start
+
+#production
+npm run start:prod
 ```
+
+Após isso, o projeto estará sendo executado na porta `5173`.
 
 ## Extras
 

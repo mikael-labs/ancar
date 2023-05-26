@@ -19,7 +19,7 @@ DB_HOST= Host do banco de dados que será utilizado
 DB_PORT= Porta do banco de dados
 DB_USERNAME= Usuário do banco de dados
 DB_PASSWORD= Senha do banco de dados
-PORT= Porta na qual a API será executada (opcional)
+PORT= Porta na qual a API será executada (opcional, Default=3000)
 TOKEN_SECRET= Segredo utilizado para gerar o token de autenticação
 ```
 
@@ -45,6 +45,8 @@ Para rodar o projeto utilizando o Docker:
 ```bash
 docker compose up
 ```
+
+Após isso, o projeto estará sendo executado na porta especificada nas variáveis de ambiente.
 
 ## Extras
 

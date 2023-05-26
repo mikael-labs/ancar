@@ -31,7 +31,7 @@ export const QuestionReport = ({ question }: Props) => {
                   bg="primary.default"
                   width={`${calculateAnswerPercentage(answer)}%`}
                   minWidth={100}
-                  className="pl-2 h-full flex items-center justify-end rounded-tr-md rounded-br-md cursor-pointer pr-2 hover:cursor-pointer hover:scale-105"
+                  className={`pl-2 h-full flex items-center justify-end rounded-tr-md rounded-br-md cursor-pointer pr-2 hover:cursor-pointer hover:scale-105`}
                 >
                   <Text color="white">
                     {answer.timesSelected} ({calculateAnswerPercentage(answer).toFixed(2)}%)

@@ -15,9 +15,7 @@ class AuthServiceImpl implements AuthService {
   }
 
   login(request: LoginRequest): Promise<LoginResponse> {
-    return this._http
-      .post("/auth/login", request)
-      .then((res) => new Promise<any>((resolve) => setTimeout(() => resolve(res), 3000)));
+    return this._http.post("/auth/login", request);
   }
 }
 

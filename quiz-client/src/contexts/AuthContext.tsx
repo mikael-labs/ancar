@@ -16,7 +16,7 @@ export type TAuthContext = {
 export const AuthContext = createContext({} as TAuthContext);
 
 export const AuthContextProvider = ({ children }: PropsWithChildren) => {
-  const [token, setToken] = useState<string | null>(null);
+  const [token, setToken] = useState<string | null>(sessionStorage.getItem("ancar:access-token"));
 
   const navigate = useNavigate();
 

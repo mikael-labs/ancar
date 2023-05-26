@@ -1,5 +1,5 @@
 {
-  "name": "survey-api",
+  "name": "quiz-api",
   "version": "0.0.1",
   "description": "",
   "author": "",
@@ -79,3 +79,4 @@
     "testEnvironment": "node"
   }
 }
+
