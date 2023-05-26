@@ -12,6 +12,15 @@ const Radio = defineStyleConfig({
   },
 });
 
+const TextConfig = defineStyleConfig({
+  defaultProps: {
+    colorScheme: "primary",
+  },
+  baseStyle: {
+    color: "primary.dark",
+  },
+});
+
 export const theme = extendTheme({
   colors: {
     primary: {
@@ -29,5 +38,5 @@ export const theme = extendTheme({
       light: "#d8d4edff",
     },
   },
-  components: { Button, Radio },
+  components: { Button, Radio, Link: TextConfig, Text: TextConfig, Heading: TextConfig },
 });

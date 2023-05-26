@@ -5,6 +5,7 @@ import { AxiosError, HttpStatusCode } from "axios";
 
 import { httpClient } from "./services/http/HttpClient";
 import { routes } from "./routes";
+import { AuthContextProvider } from "./contexts/AuthContext";
 
 function App() {
   const content = useRoutes(routes);
@@ -23,7 +24,7 @@ function App() {
     return removeInterceptor;
   }, [toast]);
 
-  return <>{content}</>;
+  return <AuthContextProvider>{content}</AuthContextProvider>;
 }
 
 export default App;

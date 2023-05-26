@@ -8,26 +8,22 @@ import {
   FormErrorMessage,
   Heading,
   Input,
+  Link,
   Spinner,
 } from "@chakra-ui/react";
 import { getIn } from "formik";
-import { useNavigate } from "react-router-dom";
+import { Link as ReactLink } from "react-router-dom";
 import { useMutation } from "@tanstack/react-query";
 
-import { LoginFormValue, useLoginForm } from "./useLoginForm";
+import { useLoginForm } from "./useLoginForm";
 import { getIsInvalid } from "../../utils/formik";
-import { authService } from "../../services/AuthService/AuthService";
+import { useAuthContext } from "../../contexts/AuthContext";
 
 export const Login = () => {
-  const navigate = useNavigate();
+  const { login } = useAuthContext();
 
   const loginMutation = useMutation({
-    mutationFn: (formValue: LoginFormValue) => {
-      return authService.login(formValue).then(({ token }) => {
-        sessionStorage.setItem("ancar:access-token", token);
-        navigate("/quizzes");
-      });
-    },
+    mutationFn: login,
   });
 
   const { loginForm } = useLoginForm({ onSubmit: loginMutation.mutateAsync });
@@ -84,6 +80,10 @@ export const Login = () => {
               Entrar {loginForm.isSubmitting && <Spinner size="sm" className="ml-2" />}
             </Button>
           </form>
+
+          <Link className="mt-3 block" as={ReactLink} to="/register">
+            Ainda não possui conta? Registre-se
+          </Link>
         </CardBody>
       </Card>
     </Box>

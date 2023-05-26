@@ -1,11 +1,13 @@
-import { PropsWithChildren, createContext, useCallback, useEffect, useMemo, useState } from "react";
+import { PropsWithChildren, createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
+import jwtDecode from "jwt-decode";
+import { useNavigate } from "react-router-dom";
+
 import { authService } from "../services/AuthService/AuthService";
 import { LoginRequest } from "../services/AuthService/requests";
-import jwtDecode from "jwt-decode";
 import { UserData } from "./types";
 
 export type TAuthContext = {
-  login: (request: LoginRequest) => void;
+  login: (request: LoginRequest) => Promise<void>;
   logout: () => void;
   token: string | null;
   userData: UserData | null;
@@ -16,6 +18,8 @@ export const AuthContext = createContext({} as TAuthContext);
 export const AuthContextProvider = ({ children }: PropsWithChildren) => {
   const [token, setToken] = useState<string | null>(null);
 
+  const navigate = useNavigate();
+
   const userData: UserData | null = useMemo(() => {
     if (!token) return null;
 
@@ -23,13 +27,14 @@ export const AuthContextProvider = ({ children }: PropsWithChildren) => {
   }, [token]);
 
   useEffect(() => {
-    if (token) localStorage.setItem("ancar:access-token", token);
-    else localStorage.removeItem("ancar:access-token");
+    if (token) sessionStorage.setItem("ancar:access-token", token);
+    else sessionStorage.removeItem("ancar:access-token");
   }, [token]);
 
   const login = useCallback((request: LoginRequest) => {
-    authService.login(request).then(({ token }) => {
+    return authService.login(request).then(({ token }) => {
       setToken(token);
+      navigate("/quizzes");
     });
   }, []);
 
@@ -38,4 +43,12 @@ export const AuthContextProvider = ({ children }: PropsWithChildren) => {
   }, []);
 
   return <AuthContext.Provider value={{ login, logout, token, userData }}>{children}</AuthContext.Provider>;
+};
+
+export const useAuthContext = () => {
+  const context = useContext(AuthContext);
+
+  if (!context) throw new Error("useAuthContext hook must be used inside a AuthContextProvider!");
+
+  return context;
 };
