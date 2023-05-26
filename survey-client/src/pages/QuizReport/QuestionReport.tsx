@@ -1,7 +1,7 @@
 import { useMemo } from "react";
 import { Box, Card, CardBody, CardHeader, HStack, Radio, Stack, Text, Tooltip } from "@chakra-ui/react";
 
-import { QuizReport, QuizReportQuestion, QuizReportQuestionAnswer } from "../../services/QuizService/responses";
+import { QuizReportQuestion, QuizReportQuestionAnswer } from "../../services/QuizService/responses";
 
 type Props = {
   question: QuizReportQuestion;
