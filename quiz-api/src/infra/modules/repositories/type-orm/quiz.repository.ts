@@ -65,7 +65,7 @@ export class TypeORMQuizRepository implements QuizRepository {
       FROM quiz qui
         LEFT JOIN question que ON que."quizId" = qui.id
         LEFT JOIN answer a ON que.id = a."questionId"
-        LEFT JOIN "user" u ON u.id = qui.id
+        LEFT JOIN "user" u ON u.id = qui."userId"
         LEFT JOIN (SELECT ua."quizId", ua."userId", COUNT(DISTINCT (ua."quizId", ua."userId")) as numberOfAnswers FROM "quiz-answer" ua GROUP BY ua."quizId", ua."userId") joint ON joint."quizId" = qui.id
       WHERE qui."userId" = $1
       GROUP BY qui.id, que.id, a.id, u.id, joint.numberOfAnswers
@@ -117,6 +117,12 @@ export class TypeORMQuizRepository implements QuizRepository {
       QuizId,
       ListQuizzesWithNumberOfAnswersQueryResult
     >(quizzesInfoEntries);
+
+    console.log(
+      'QUIZZES INFO',
+      JSON.stringify(results, null, 2),
+      JSON.stringify(quizzesInfo, null, 2),
+    );
 
     const quizzes = Array.from(quizzesInfo.entries()).map(
       ([quizId, quizInfo]) => {

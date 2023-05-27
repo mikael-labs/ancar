@@ -7,7 +7,7 @@ import {
 
 @Global()
 @Module({
-  imports: [ConfigModule],
+  imports: [ConfigModule.forRoot()],
   providers: [
     { provide: ConfigurationService, useClass: ConfigurationServiceImpl },
   ],
