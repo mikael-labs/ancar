@@ -1,4 +1,4 @@
-import { Global, Module } from '@nestjs/common';
+import { ConsoleLogger, Global, Logger, Module } from '@nestjs/common';
 import { JwtModule } from '@nestjs/jwt';
 
 import { TokenService, CryptoService } from 'src/core/services';
@@ -24,7 +24,8 @@ import { JwtTokenService } from './jwt-token.service';
   providers: [
     { provide: CryptoService, useClass: CryptoServiceImpl },
     { provide: TokenService, useClass: JwtTokenService },
+    { provide: Logger, useClass: ConsoleLogger },
   ],
-  exports: [CryptoService, TokenService],
+  exports: [CryptoService, TokenService, Logger],
 })
 export class ServicesModule {}

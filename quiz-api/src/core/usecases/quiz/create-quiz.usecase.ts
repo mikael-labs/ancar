@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 
 import { QuizRepository, UserRepository } from 'src/core/data';
 
@@ -28,6 +28,7 @@ export class CreateQuizUseCaseImpl implements CreateQuizUseCase {
   constructor(
     private _userRepository: UserRepository,
     private _quizRepository: QuizRepository,
+    private _logger: Logger,
   ) {}
 
   async execute({
@@ -53,6 +54,11 @@ export class CreateQuizUseCaseImpl implements CreateQuizUseCase {
       questions,
       user,
     });
+
+    this._logger.log(
+      `Criando Quiz: ${JSON.stringify(QuizDTO.fromDomain(quiz), null, 2)}`,
+      `CreateQuizUseCase`,
+    );
 
     return this._quizRepository.create(quiz).then(QuizDTO.fromDomain);
   }
