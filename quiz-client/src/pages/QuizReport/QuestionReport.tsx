@@ -1,5 +1,5 @@
 import { useMemo } from "react";
-import { Box, Card, CardBody, CardHeader, HStack, Radio, Stack, Text, Tooltip } from "@chakra-ui/react";
+import { Card, CardBody, CardHeader, Stack } from "@chakra-ui/react";
 
 import { QuizReportQuestion, QuizReportQuestionAnswer } from "../../services/QuizService/responses";
 import { AnswerReport } from "./AnswerReport";
