@@ -28,12 +28,11 @@ type ListQuizzesWithNumberOfAnswersQueryResult = {
   answerid: number;
   answerquestionid: number;
   answerdescription: string;
-  numberofanswers: string;
+  numberofanswers: string | null;
   userid: number;
   username: string;
   usercpf: string;
   userpassword: string;
-  total: number;
 };
 
 @Injectable()
@@ -54,25 +53,41 @@ export class TypeORMQuizRepository implements QuizRepository {
   }): Promise<Page<Quiz & { numberOfAnswers: number }>> {
     const skip = (page - 1) * pageSize;
 
-    const results = await this._quizRepository.manager.query<
-      ListQuizzesWithNumberOfAnswersQueryResult[]
-    >(
-      `SELECT qui.id as quizId, qui.name as quizName, qui."userId" as quizUserId, qui.description as quizDescription, qui.date as quizDate, 
-        que.id as questionId, que.description as questionDescription, que."quizId" as questionQuizId, 
-        a.id as answerId, a."questionId" as answerQuestionId, a.description as answerDescription, 
-        u.id as userId, u.name as userName, u."CPF" as userCPF, u.password as userPassword,
-        joint.numberOfAnswers, COUNT(*) OVER () as total     
+    const fromQuery = `
       FROM quiz qui
-        LEFT JOIN question que ON que."quizId" = qui.id
-        LEFT JOIN answer a ON que.id = a."questionId"
         LEFT JOIN "user" u ON u.id = qui."userId"
         LEFT JOIN (SELECT ua."quizId", ua."userId", COUNT(DISTINCT (ua."quizId", ua."userId")) as numberOfAnswers FROM "quiz-answer" ua GROUP BY ua."quizId", ua."userId") joint ON joint."quizId" = qui.id
       WHERE qui."userId" = $1
-      GROUP BY qui.id, que.id, a.id, u.id, joint.numberOfAnswers
-      OFFSET $2 LIMIT $3
-    `,
-      [userId, skip, pageSize],
-    );
+    `;
+
+    const resultsQuery = `
+      SELECT 
+        results.quizid, results.quizname, results.quizuserid, results.quizdescription, results.quizdate,
+        results.userid, results.username, results.usercpf, results.userpassword, results.numberofanswers,
+        a.id as answerId, a.description as answerDescription, a."questionId" as answerquestionid,
+        que.id as questionId, que.description as questiondescription
+          FROM (SELECT qui.id as quizId, qui.name as quizName, qui."userId" as quizUserId, qui.description as quizDescription, qui.date as quizDate,
+            u.id as userId, u.name as userName, u."CPF" as userCPF, u.password as userPassword, joint.numberOfAnswers   
+            ${fromQuery}
+          GROUP BY qui.id, u.id, joint.numberOfAnswers
+          OFFSET $2 LIMIT $3) results 
+        JOIN question que ON que."quizId" = results.quizid
+        JOIN answer a ON a."questionId" = que.id
+    `;
+
+    const countQuery = `
+      SELECT COUNT(DISTINCT(qui."id")) as total
+        ${fromQuery}
+    `;
+
+    const [results, count] = await Promise.all([
+      this._quizRepository.manager.query<
+        ListQuizzesWithNumberOfAnswersQueryResult[]
+      >(resultsQuery, [userId, skip, pageSize]),
+      this._quizRepository.manager.query<[{ total: string }]>(countQuery, [
+        userId,
+      ]),
+    ]);
 
     const questionsIds = new Set(results.map((result) => result.questionid));
 
@@ -118,12 +133,6 @@ export class TypeORMQuizRepository implements QuizRepository {
       ListQuizzesWithNumberOfAnswersQueryResult
     >(quizzesInfoEntries);
 
-    console.log(
-      'QUIZZES INFO',
-      JSON.stringify(results, null, 2),
-      JSON.stringify(quizzesInfo, null, 2),
-    );
-
     const quizzes = Array.from(quizzesInfo.entries()).map(
       ([quizId, quizInfo]) => {
         const quiz = new Quiz({
@@ -140,11 +149,14 @@ export class TypeORMQuizRepository implements QuizRepository {
           }),
         });
 
-        return { ...quiz, numberOfAnswers: parseInt(quizInfo.numberofanswers) };
+        return {
+          ...quiz,
+          numberOfAnswers: parseInt(quizInfo.numberofanswers ?? '0'),
+        };
       },
     );
 
-    const total = results[0]?.total ?? 0;
+    const total = parseInt(count[0].total);
     const totalPages = Math.ceil(total / pageSize);
     const nextPage = page >= totalPages ? null : page + 1;
 

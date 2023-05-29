@@ -2,6 +2,7 @@ import { useMemo } from "react";
 import { Box, Card, CardBody, CardHeader, HStack, Radio, Stack, Text, Tooltip } from "@chakra-ui/react";
 
 import { QuizReportQuestion, QuizReportQuestionAnswer } from "../../services/QuizService/responses";
+import { AnswerReport } from "./AnswerReport";
 
 type Props = {
   question: QuizReportQuestion;
@@ -14,7 +15,7 @@ export const QuestionReport = ({ question }: Props) => {
   );
 
   function calculateAnswerPercentage(answer: QuizReportQuestionAnswer) {
-    return (answer.timesSelected * 100) / answersTotal;
+    return (answer.timesSelected * 100) / answersTotal || 0;
   }
 
   return (
@@ -23,22 +24,7 @@ export const QuestionReport = ({ question }: Props) => {
       <CardBody>
         <Stack>
           {question.answers.map((answer) => (
-            <HStack key={answer.id} className="gap-2 h-16 items-center">
-              <Radio isDisabled />
-
-              <Tooltip label={answer.description}>
-                <Box
-                  bg="primary.default"
-                  width={`${calculateAnswerPercentage(answer)}%`}
-                  minWidth={100}
-                  className={`pl-2 h-full flex items-center justify-end rounded-tr-md rounded-br-md cursor-pointer pr-2 hover:cursor-pointer hover:scale-105`}
-                >
-                  <Text color="white">
-                    {answer.timesSelected} ({calculateAnswerPercentage(answer).toFixed(2)}%)
-                  </Text>
-                </Box>
-              </Tooltip>
-            </HStack>
+            <AnswerReport key={answer.id} answer={answer} percentage={calculateAnswerPercentage(answer)} />
           ))}
         </Stack>
       </CardBody>

@@ -13,7 +13,7 @@ import { MyQuizListItem } from "../../../services/QuizService/responses";
 export const MyQuizzes = () => {
   const [page, setPage] = useState(1);
 
-  const { data, isError, isFetching, refetch } = useQuery(["getMyQuizzes"], () =>
+  const { data, isError, isFetching, refetch } = useQuery(["getMyQuizzes", page], () =>
     quizService.getMyQuizzes({ page, pageSize: 10 })
   );
 

@@ -16,7 +16,7 @@ export const MyQuizzesTable = ({ quizzes, onRemoveQuiz }: Props) => {
           <Tr>
             <Th>Nome</Th>
             <Th>Descrição</Th>
-            <Th>Respostas</Th>
+            <Th textAlign="center">Respostas</Th>
             <Th />
           </Tr>
         </Thead>
@@ -25,7 +25,7 @@ export const MyQuizzesTable = ({ quizzes, onRemoveQuiz }: Props) => {
             <Tr key={quiz.id}>
               <Td>{quiz.name}</Td>
               <Td>{quiz.description}</Td>
-              <Td>{quiz.numberOfAnswers}</Td>
+              <Td textAlign="center">{quiz.numberOfAnswers}</Td>
               <Td>
                 <HStack className="items-center">
                   <IconButton

@@ -52,7 +52,7 @@ export const QuestionForm = ({ quizForm, index }: Props) => {
   return (
     <Popover trigger="hover" placement="right-start">
       <PopoverTrigger>
-        <Card>
+        <Card className="shadow-md">
           <CardBody>
             <HStack justifyContent="space-between" className="mb-5 flex-wrap sm:flex-nowrap gap-3">
               <FormControl isInvalid={getIsInvalid(quizForm, `questions.${index}.description`)}>
